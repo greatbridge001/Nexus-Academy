@@ -1,0 +1,124 @@
+<%- include('../partials/header', { pageTitle: 'My Dashboard' }) %>
+
+<div class="dashboard-layout">
+  <div class="dashboard-sidebar">
+    <div class="dash-profile">
+      <div class="dash-avatar">
+        <%= student.full_name.charAt(0).toUpperCase() %>
+      </div>
+      <h3><%= student.full_name %></h3>
+      <p><%= student.email %></p>
+    </div>
+    <nav class="dash-nav">
+      <a href="/dashboard" class="dash-nav-link active"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a href="/courses" class="dash-nav-link"><i class="fas fa-graduation-cap"></i> Browse Courses</a>
+      <a href="/logout" class="dash-nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </nav>
+  </div>
+
+  <div class="dashboard-main">
+    <div class="dash-top">
+      <div>
+        <h1>Welcome back, <em><%= student.full_name.split(' ')[0] %></em></h1>
+        <p class="dash-sub">Track your progress and continue learning.</p>
+      </div>
+      <a href="/courses" class="btn btn-primary"><i class="fas fa-plus"></i> New Course</a>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="dash-stats">
+      <div class="dash-stat">
+        <div class="dash-stat-icon blue"><i class="fas fa-book-open"></i></div>
+        <div>
+          <span class="dash-stat-num"><%= enrollments.filter(e => e.payment_status === 'paid').length %></span>
+          <span class="dash-stat-label">Enrolled Courses</span>
+        </div>
+      </div>
+      <div class="dash-stat">
+        <div class="dash-stat-icon gold"><i class="fas fa-award"></i></div>
+        <div>
+          <span class="dash-stat-num"><%= certificates.length %></span>
+          <span class="dash-stat-label">Certificates Earned</span>
+        </div>
+      </div>
+      <div class="dash-stat">
+        <div class="dash-stat-icon green"><i class="fas fa-check-circle"></i></div>
+        <div>
+          <span class="dash-stat-num"><%= enrollments.filter(e => e.status === 'completed').length %></span>
+          <span class="dash-stat-label">Completed</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Enrolled Courses -->
+    <section class="dash-section">
+      <h2>My Courses</h2>
+      <% if (enrollments.length === 0) { %>
+      <div class="dash-empty">
+        <i class="fas fa-graduation-cap"></i>
+        <p>You haven't enrolled in any courses yet.</p>
+        <a href="/courses" class="btn btn-primary">Browse Programs</a>
+      </div>
+      <% } else { %>
+      <div class="dash-course-list">
+        <% enrollments.forEach(enroll => {
+          const p = progressMap[enroll.course_id] || { percent: 0, completed: 0, total: 0 };
+        %>
+        <div class="dash-course-card">
+          <img src="<%= enroll.thumbnail_url %>" alt="<%= enroll.title %>">
+          <div class="dash-course-info">
+            <div class="dash-course-top">
+              <h3><%= enroll.title %></h3>
+              <span class="dash-status dash-status--<%= enroll.payment_status === 'paid' ? 'active' : 'pending' %>">
+                <%= enroll.payment_status === 'paid' ? 'Active' : 'Payment Pending' %>
+              </span>
+            </div>
+            <div class="dash-course-meta">
+              <span><i class="fas fa-signal"></i> <%= enroll.level %></span>
+              <span><i class="fas fa-clock"></i> <%= enroll.duration_hours %>h</span>
+            </div>
+            <% if (enroll.payment_status === 'paid') { %>
+            <div class="dash-course-progress">
+              <div class="dash-prog-bar">
+                <div class="dash-prog-fill" style="width:<%= p.percent %>%"></div>
+              </div>
+              <span><%= p.percent %>% (<%= p.completed %>/<%= p.total %> lessons)</span>
+            </div>
+            <a href="/learn/<%= enroll.slug %>" class="btn btn-primary btn-sm">
+              <i class="fas fa-play"></i> <%= p.completed > 0 ? 'Continue' : 'Start' %> Learning
+            </a>
+            <% } else { %>
+            <p class="pending-note"><i class="fas fa-info-circle"></i> Payment pending. <a href="/courses/<%= enroll.slug %>">Complete payment</a></p>
+            <% } %>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+      <% } %>
+    </section>
+
+    <!-- Certificates -->
+    <% if (certificates.length > 0) { %>
+    <section class="dash-section">
+      <h2>My Certificates</h2>
+      <div class="certs-grid">
+        <% certificates.forEach(cert => { %>
+        <div class="cert-card">
+          <div class="cert-card-icon"><i class="fas fa-award"></i></div>
+          <div class="cert-card-info">
+            <h4><%= cert.title %></h4>
+            <p>Certificate #<%= cert.certificate_number %></p>
+            <p class="cert-date">Issued: <%= new Date(cert.issued_at).toLocaleDateString('en-KE', {year:'numeric',month:'long',day:'numeric'}) %></p>
+          </div>
+          <a href="/learn/<%= cert.slug %>/certificate" class="btn btn-gold btn-sm" target="_blank">
+            <i class="fas fa-download"></i> View
+          </a>
+        </div>
+        <% }) %>
+      </div>
+    </section>
+    <% } %>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

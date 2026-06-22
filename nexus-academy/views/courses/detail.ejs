@@ -1,0 +1,156 @@
+<%- include('../partials/header', { pageTitle: course.title }) %>
+
+<div class="course-hero" style="background-image: url('<%= course.hero_image_url %>')">
+  <div class="course-hero-overlay"></div>
+  <div class="container">
+    <div class="course-hero-content">
+      <div class="breadcrumb">
+        <a href="/">Home</a> <i class="fas fa-chevron-right"></i>
+        <a href="/courses">Programs</a> <i class="fas fa-chevron-right"></i>
+        <span><%= course.title %></span>
+      </div>
+      <h1 class="course-hero-title"><%= course.title %></h1>
+      <p class="course-hero-sub"><%= course.subtitle %></p>
+      <div class="course-hero-meta">
+        <span><i class="fas fa-signal"></i> <%= course.level %></span>
+        <span><i class="fas fa-clock"></i> <%= course.duration_hours %> hours</span>
+        <span><i class="fas fa-layer-group"></i> <%= modules.length %> Modules</span>
+        <span><i class="fas fa-certificate"></i> Certificate Included</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="course-detail-layout">
+  <div class="container">
+    <div class="course-detail-grid">
+
+      <!-- LEFT: Content -->
+      <div class="course-detail-main">
+
+        <!-- Description -->
+        <section class="detail-section">
+          <h2>About This Program</h2>
+          <p class="course-long-desc"><%= course.description %></p>
+        </section>
+
+        <!-- What you'll learn -->
+        <section class="detail-section">
+          <h2>What You'll Learn</h2>
+          <div class="learn-grid">
+            <% const learnPoints = {
+              'web-development': ['Build responsive websites from scratch','Master HTML5, CSS3, and JavaScript','Create full-stack Node.js applications','Work with PostgreSQL databases','Deploy projects to the web','Use Git and GitHub professionally'],
+              'graphic-design': ['Apply professional design principles','Master typography and color theory','Create compelling brand identities','Design logos and visual systems','Build a freelance-ready portfolio','Work with industry-standard tools'],
+              'cybersecurity': ['Understand the threat landscape','Perform ethical hacking and pentesting','Analyze and secure networks','Conduct digital forensics investigations','Secure web applications','Prepare for industry certifications']
+            }; %>
+            <% (learnPoints[course.slug] || []).forEach(point => { %>
+            <div class="learn-point">
+              <i class="fas fa-check-circle"></i>
+              <span><%= point %></span>
+            </div>
+            <% }) %>
+          </div>
+        </section>
+
+        <!-- Curriculum -->
+        <section class="detail-section">
+          <h2>Course Curriculum</h2>
+          <p class="curriculum-note"><%= modules.length %> modules · Videos, images, exercises & certificate</p>
+          <div class="curriculum">
+            <% modules.forEach((mod, i) => { %>
+            <div class="curriculum-item">
+              <div class="curriculum-header">
+                <div class="curriculum-num"><%= (i+1).toString().padStart(2,'0') %></div>
+                <div class="curriculum-info">
+                  <h4><%= mod.title %></h4>
+                  <p><%= mod.description %></p>
+                </div>
+                <div class="curriculum-meta">
+                  <span><%= countMap[mod.id] || '4–6' %> lessons</span>
+                  <span class="module-badge">+ Exercise</span>
+                </div>
+              </div>
+            </div>
+            <% }) %>
+          </div>
+        </section>
+
+        <!-- Requirements -->
+        <section class="detail-section">
+          <h2>Requirements</h2>
+          <ul class="req-list">
+            <% const reqs = {
+              'web-development': ['A computer (Windows, Mac, or Linux)','Stable internet connection','Text editor (VS Code recommended — free)','No prior coding experience required'],
+              'graphic-design': ['A computer with internet access','Willingness to learn and practice','Free design tools provided (Canva, Figma free plan)','No design experience needed'],
+              'cybersecurity': ['Basic computer and internet knowledge','A computer with at least 8GB RAM for VMs','Curiosity and analytical mindset','Intermediate English reading ability']
+            }; %>
+            <% (reqs[course.slug] || []).forEach(r => { %>
+            <li><i class="fas fa-dot-circle"></i> <%= r %></li>
+            <% }) %>
+          </ul>
+        </section>
+      </div>
+
+      <!-- RIGHT: Enrollment card -->
+      <div class="course-detail-sidebar">
+        <div class="enrollment-card" id="enrollCard">
+          <div class="enrollment-price">
+            <span class="enroll-price-main">KES <%= course.price.toLocaleString() %></span>
+            <span class="enroll-price-note">One-time payment · Lifetime access</span>
+          </div>
+
+          <% if (error) { %>
+          <div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> <%= error === 'not_enrolled' ? 'You need to enroll to access this course.' : error %></div>
+          <% } %>
+
+          <% if (!student) { %>
+            <p class="enroll-cta-note">Create an account or sign in to enroll</p>
+            <a href="/register" class="btn btn-primary btn-full">Create Account & Enroll</a>
+            <a href="/login" class="btn btn-outline btn-full" style="margin-top:10px">Already have an account?</a>
+          <% } else if (enrollment && enrollment.payment_status === 'paid') { %>
+            <a href="/learn/<%= course.slug %>" class="btn btn-primary btn-full">
+              <i class="fas fa-play-circle"></i> Continue Learning
+            </a>
+          <% } else { %>
+            <form action="/courses/<%= course.slug %>/enroll" method="POST" id="enrollForm">
+              <div class="form-group">
+                <label for="phone">M-Pesa Phone Number</label>
+                <div class="input-icon">
+                  <i class="fas fa-phone"></i>
+                  <input type="tel" name="phone" id="phone" placeholder="0712 345 678" required
+                    pattern="[0-9+\s]{9,13}">
+                </div>
+                <small>You'll receive an M-Pesa push notification to confirm payment</small>
+              </div>
+              <button type="submit" class="btn btn-primary btn-full" id="enrollBtn">
+                <i class="fas fa-lock"></i> Pay KES <%= course.price.toLocaleString() %> & Enroll
+              </button>
+            </form>
+          <% } %>
+
+          <div class="enroll-includes">
+            <h5>This program includes:</h5>
+            <ul>
+              <li><i class="fas fa-video"></i> Embedded video lessons</li>
+              <li><i class="fas fa-images"></i> Visual learning materials</li>
+              <li><i class="fas fa-tasks"></i> Exercises after every module</li>
+              <li><i class="fas fa-infinity"></i> Lifetime access</li>
+              <li><i class="fas fa-certificate"></i> Completion certificate</li>
+              <li><i class="fas fa-mobile-alt"></i> Mobile-friendly</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('enrollForm')?.addEventListener('submit', function(e) {
+  const btn = document.getElementById('enrollBtn');
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+  btn.disabled = true;
+});
+</script>
+
+<%- include('../partials/footer') %>

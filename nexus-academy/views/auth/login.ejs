@@ -1,0 +1,53 @@
+<%- include('../partials/header', { pageTitle: 'Sign In' }) %>
+
+<div class="auth-page">
+  <div class="auth-panel">
+    <div class="auth-brand">
+      <span class="logo-nx">NX</span>
+      <span class="logo-full">Nexus <span class="logo-accent">Academy</span></span>
+    </div>
+    <h1 class="auth-title">Welcome Back</h1>
+    <p class="auth-sub">Sign in to continue your learning journey.</p>
+
+    <% if (error) { %>
+    <div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> <%= error %></div>
+    <% } %>
+    <% if (info) { %>
+    <div class="alert alert-info"><i class="fas fa-info-circle"></i> <%= info %></div>
+    <% } %>
+
+    <form action="/login" method="POST" class="auth-form">
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <div class="input-icon">
+          <i class="fas fa-envelope"></i>
+          <input type="email" name="email" id="email" placeholder="you@email.com" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-icon">
+          <i class="fas fa-lock"></i>
+          <input type="password" name="password" id="password" placeholder="Your password" required>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">
+        Sign In <i class="fas fa-arrow-right"></i>
+      </button>
+    </form>
+
+    <p class="auth-switch">Don't have an account? <a href="/register">Create one free</a></p>
+  </div>
+  <div class="auth-visual">
+    <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&q=80" alt="">
+    <div class="auth-visual-overlay">
+      <div class="auth-visual-quote">
+        <i class="fas fa-quote-left"></i>
+        <p>"An investment in knowledge pays the best interest."</p>
+        <span>— Benjamin Franklin</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

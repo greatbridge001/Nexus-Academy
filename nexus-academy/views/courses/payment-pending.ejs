@@ -1,0 +1,110 @@
+<%- include('../partials/header', { pageTitle: 'Payment Pending' }) %>
+
+<div class="payment-page">
+  <div class="payment-card">
+    <div class="payment-icon">
+      <div class="payment-spinner"></div>
+      <i class="fas fa-mobile-alt"></i>
+    </div>
+    <h2>Check Your Phone</h2>
+    <p class="payment-sub">An M-Pesa prompt has been sent to</p>
+    <div class="payment-phone"><%= phone %></div>
+    <div class="payment-steps">
+      <div class="p-step active" id="step1">
+        <div class="p-step-icon"><i class="fas fa-mobile-alt"></i></div>
+        <div>
+          <strong>M-Pesa Push Sent</strong>
+          <span>Check your phone notification</span>
+        </div>
+        <div class="p-step-status"><i class="fas fa-check-circle"></i></div>
+      </div>
+      <div class="p-step" id="step2">
+        <div class="p-step-icon"><i class="fas fa-key"></i></div>
+        <div>
+          <strong>Enter M-Pesa PIN</strong>
+          <span>Confirm KES <%= course.price.toLocaleString() %> payment</span>
+        </div>
+        <div class="p-step-status p-step-wait"><div class="mini-spin"></div></div>
+      </div>
+      <div class="p-step" id="step3">
+        <div class="p-step-icon"><i class="fas fa-graduation-cap"></i></div>
+        <div>
+          <strong>Access Granted</strong>
+          <span>Course unlocked instantly</span>
+        </div>
+        <div class="p-step-status p-step-wait"><i class="fas fa-circle"></i></div>
+      </div>
+    </div>
+
+    <div class="payment-ref">
+      Reference: <code><%= reference %></code>
+    </div>
+
+    <p class="payment-note">
+      <i class="fas fa-info-circle"></i>
+      The M-Pesa prompt expires in <span id="countdown">120</span> seconds.
+      If you didn't receive it, ensure your number is active and has sufficient balance.
+    </p>
+
+    <div id="paymentSuccess" class="payment-success hidden">
+      <i class="fas fa-check-circle"></i>
+      <h3>Payment Confirmed!</h3>
+      <p>Redirecting to your course...</p>
+    </div>
+
+    <div class="payment-actions">
+      <a href="/courses/<%= course.slug %>" class="btn btn-ghost">← Back to Course</a>
+      <button onclick="checkStatus()" class="btn btn-outline" id="checkBtn">
+        <i class="fas fa-sync-alt"></i> Check Status
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+const reference = '<%= reference %>';
+const courseSlug = '<%= course.slug %>';
+let countdown = 120;
+let checking = false;
+
+// Countdown timer
+const timer = setInterval(() => {
+  countdown--;
+  const el = document.getElementById('countdown');
+  if (el) el.textContent = countdown;
+  if (countdown <= 0) clearInterval(timer);
+}, 1000);
+
+// Auto-poll every 5 seconds
+const pollInterval = setInterval(checkStatus, 5000);
+
+async function checkStatus() {
+  if (checking) return;
+  checking = true;
+  const btn = document.getElementById('checkBtn');
+  if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
+
+  try {
+    const res = await fetch(`/courses/${courseSlug}/check-payment?reference=${reference}`);
+    const data = await res.json();
+
+    if (data.status === 'paid') {
+      clearInterval(pollInterval);
+      clearInterval(timer);
+      document.getElementById('step2').classList.add('active');
+      document.getElementById('step3').classList.add('active');
+      document.getElementById('paymentSuccess').classList.remove('hidden');
+      setTimeout(() => window.location.href = `/learn/${courseSlug}`, 2000);
+    } else if (data.status === 'failed') {
+      clearInterval(pollInterval);
+      alert('Payment was not completed. Please try again.');
+      window.location.href = `/courses/${courseSlug}`;
+    }
+  } catch (e) {}
+
+  if (btn) btn.innerHTML = '<i class="fas fa-sync-alt"></i> Check Status';
+  checking = false;
+}
+</script>
+
+<%- include('../partials/footer') %>

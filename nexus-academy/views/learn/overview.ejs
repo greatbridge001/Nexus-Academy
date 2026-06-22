@@ -1,0 +1,115 @@
+<%- include('../partials/header', { pageTitle: 'Learn: ' + course.title }) %>
+
+<div class="learn-layout">
+  <!-- Sidebar -->
+  <aside class="learn-sidebar" id="learnSidebar">
+    <div class="sidebar-header">
+      <a href="/dashboard" class="sidebar-back"><i class="fas fa-arrow-left"></i> My Courses</a>
+      <h3 class="sidebar-course-title"><%= course.title %></h3>
+    </div>
+    <nav class="sidebar-nav">
+      <% modules.forEach((mod, i) => { %>
+      <div class="sidebar-module">
+        <div class="sidebar-module-header">
+          <span class="sidebar-mod-num"><%= (i+1).toString().padStart(2,'0') %></span>
+          <span class="sidebar-mod-title"><%= mod.title.replace(/^Module \d+: /, '') %></span>
+          <% const p = progressMap[mod.id]; %>
+          <% if (p && p.percent === 100 && passedModules.has(mod.id)) { %>
+          <i class="fas fa-check-circle sidebar-complete"></i>
+          <% } %>
+        </div>
+        <% if (p) { %>
+        <div class="sidebar-progress-bar">
+          <div class="sidebar-progress-fill" style="width: <%= p.percent %>%"></div>
+        </div>
+        <% } %>
+      </div>
+      <% }) %>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="learn-main">
+    <!-- Course Hero -->
+    <div class="learn-hero" style="background-image: url('<%= course.hero_image_url %>')">
+      <div class="learn-hero-overlay"></div>
+      <div class="learn-hero-content">
+        <h1><%= course.title %></h1>
+        <p><%= course.subtitle %></p>
+        <% 
+          let totalLessons = 0, completedLessons = 0;
+          Object.values(progressMap).forEach(p => {
+            totalLessons += p.total;
+            completedLessons += p.completed;
+          });
+          const overallPct = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+        %>
+        <div class="learn-overall-progress">
+          <div class="learn-progress-bar">
+            <div class="learn-progress-fill" style="width:<%= overallPct %>%"></div>
+          </div>
+          <span><%= overallPct %>% Complete (<%= completedLessons %>/<%= totalLessons %> lessons)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modules Grid -->
+    <div class="learn-content">
+      <h2 class="learn-section-title">Your Curriculum</h2>
+      <div class="module-cards">
+        <% modules.forEach((mod, i) => {
+          const p = progressMap[mod.id] || { percent: 0, completed: 0, total: 0 };
+          const isPassed = passedModules.has(mod.id);
+        %>
+        <div class="module-card <%= isPassed ? 'module-card--done' : '' %>">
+          <div class="module-card-num"><%= (i+1).toString().padStart(2,'0') %></div>
+          <div class="module-card-body">
+            <h3><%= mod.title %></h3>
+            <p><%= mod.description %></p>
+            <div class="module-card-meta">
+              <div class="module-progress">
+                <div class="module-progress-bar">
+                  <div class="module-progress-fill" style="width:<%= p.percent %>%"></div>
+                </div>
+                <span><%= p.percent %>%</span>
+              </div>
+            </div>
+            <div class="module-card-actions">
+              <a href="/learn/<%= course.slug %>/module/<%= mod.id %>/lesson/first" class="btn btn-sm btn-primary">
+                <% if (p.completed > 0) { %>
+                  <i class="fas fa-play"></i> Continue
+                <% } else { %>
+                  <i class="fas fa-book-open"></i> Start
+                <% } %>
+              </a>
+              <% if (p.percent === 100) { %>
+              <a href="/learn/<%= course.slug %>/module/<%= mod.id %>/exercise" class="btn btn-sm <%= isPassed ? 'btn-success' : 'btn-outline' %>">
+                <i class="fas <%= isPassed ? 'fa-check' : 'fa-tasks' %>"></i>
+                <%= isPassed ? 'Exercise Passed' : 'Take Exercise' %>
+              </a>
+              <% } %>
+            </div>
+          </div>
+          <% if (isPassed) { %>
+          <div class="module-card-badge"><i class="fas fa-medal"></i></div>
+          <% } %>
+        </div>
+        <% }) %>
+      </div>
+
+      <!-- Certificate section -->
+      <div class="cert-promo">
+        <div class="cert-promo-icon"><i class="fas fa-award"></i></div>
+        <div class="cert-promo-text">
+          <h3>Your Certificate Awaits</h3>
+          <p>Complete all <%= modules.length %> modules and pass every exercise to unlock your Nexus Academy certificate.</p>
+        </div>
+        <a href="/learn/<%= course.slug %>/certificate" class="btn btn-gold">
+          <i class="fas fa-certificate"></i> View Certificate
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

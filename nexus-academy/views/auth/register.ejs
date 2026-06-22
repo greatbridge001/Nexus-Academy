@@ -1,0 +1,71 @@
+<%- include('../partials/header', { pageTitle: 'Create Account' }) %>
+
+<div class="auth-page">
+  <div class="auth-panel">
+    <div class="auth-brand">
+      <span class="logo-nx">NX</span>
+      <span class="logo-full">Nexus <span class="logo-accent">Academy</span></span>
+    </div>
+    <h1 class="auth-title">Begin Your Journey</h1>
+    <p class="auth-sub">Create your student account to enroll in a program.</p>
+
+    <% if (error) { %>
+    <div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> <%= error %></div>
+    <% } %>
+
+    <form action="/register" method="POST" class="auth-form">
+      <div class="form-group">
+        <label for="full_name">Full Name</label>
+        <div class="input-icon">
+          <i class="fas fa-user"></i>
+          <input type="text" name="full_name" id="full_name" placeholder="John Doe" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <div class="input-icon">
+          <i class="fas fa-envelope"></i>
+          <input type="email" name="email" id="email" placeholder="you@email.com" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone Number (M-Pesa)</label>
+        <div class="input-icon">
+          <i class="fas fa-phone"></i>
+          <input type="tel" name="phone" id="phone" placeholder="0712 345 678" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-icon">
+          <i class="fas fa-lock"></i>
+          <input type="password" name="password" id="password" placeholder="Min. 8 characters" required minlength="8">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="confirm_password">Confirm Password</label>
+        <div class="input-icon">
+          <i class="fas fa-lock"></i>
+          <input type="password" name="confirm_password" id="confirm_password" placeholder="Repeat password" required>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">
+        Create Account <i class="fas fa-arrow-right"></i>
+      </button>
+    </form>
+
+    <p class="auth-switch">Already have an account? <a href="/login">Sign in</a></p>
+  </div>
+  <div class="auth-visual">
+    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80" alt="">
+    <div class="auth-visual-overlay">
+      <div class="auth-visual-quote">
+        <i class="fas fa-quote-left"></i>
+        <p>"The best investment you can make is in yourself."</p>
+        <span>— Warren Buffett</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

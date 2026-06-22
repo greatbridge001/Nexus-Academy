@@ -1,0 +1,291 @@
+<%- include('partials/header', { pageTitle: 'Home' }) %>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-grid"></div>
+    <div class="hero-glow hero-glow-1"></div>
+    <div class="hero-glow hero-glow-2"></div>
+  </div>
+  <div class="hero-container">
+    <div class="hero-eyebrow">
+      <span class="eyebrow-dot"></span>
+      <span>Nexus Academy — Institute of Digital Excellence</span>
+    </div>
+    <h1 class="hero-title">
+      Master the Skills<br>
+      <em>That Define</em><br>
+      <span class="hero-title-accent">Tomorrow's World</span>
+    </h1>
+    <p class="hero-sub">
+      Three elite programs. Real-world curriculum. Industry-recognized certificates.
+      Join thousands transforming their careers with Nexus Academy.
+    </p>
+    <div class="hero-actions">
+      <a href="/courses" class="btn btn-primary btn-lg">
+        Explore Programs <i class="fas fa-arrow-right"></i>
+      </a>
+      <a href="#about" class="btn btn-ghost btn-lg">
+        <i class="fas fa-play-circle"></i> How It Works
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-num">3</span>
+        <span class="stat-label">Elite Programs</span>
+      </div>
+      <div class="stat-div"></div>
+      <div class="stat">
+        <span class="stat-num">24+</span>
+        <span class="stat-label">Modules</span>
+      </div>
+      <div class="stat-div"></div>
+      <div class="stat">
+        <span class="stat-num">100%</span>
+        <span class="stat-label">Online</span>
+      </div>
+      <div class="stat-div"></div>
+      <div class="stat">
+        <span class="stat-num">∞</span>
+        <span class="stat-label">Lifetime Access</span>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- COURSES SECTION -->
+<section class="courses-section" id="courses">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-eyebrow">Our Programs</span>
+      <h2 class="section-title">Choose Your <em>Discipline</em></h2>
+      <p class="section-sub">Each program is crafted to take you from foundations to professional mastery, with hands-on projects and industry-grade curriculum.</p>
+    </div>
+
+    <div class="course-cards">
+      <% const icons = { 'web-development': 'fa-code', 'graphic-design': 'fa-pen-nib', 'cybersecurity': 'fa-shield-halved' }; %>
+      <% const colors = { 'web-development': 'blue', 'graphic-design': 'purple', 'cybersecurity': 'red' }; %>
+      <% courses.forEach(course => { %>
+      <div class="course-card course-card--<%= colors[course.slug] || 'blue' %>" data-reveal>
+        <div class="course-card-img">
+          <img src="<%= course.thumbnail_url %>" alt="<%= course.title %>" loading="lazy">
+          <div class="course-card-overlay"></div>
+          <div class="course-card-badge">
+            <i class="fas <%= icons[course.slug] || 'fa-graduation-cap' %>"></i>
+          </div>
+        </div>
+        <div class="course-card-body">
+          <div class="course-meta-row">
+            <span class="course-level"><%= course.level %></span>
+            <span class="course-duration"><i class="fas fa-clock"></i> <%= course.duration_hours %>h</span>
+          </div>
+          <h3 class="course-title"><%= course.title %></h3>
+          <p class="course-subtitle"><%= course.subtitle %></p>
+          <div class="course-features">
+            <span><i class="fas fa-layer-group"></i> <%= course.total_modules %> Modules</span>
+            <span><i class="fas fa-certificate"></i> Certificate</span>
+            <span><i class="fas fa-video"></i> Video Lessons</span>
+          </div>
+          <div class="course-card-footer">
+            <div class="course-price">
+              <span class="price-amount">KES <%= course.price.toLocaleString() %></span>
+              <span class="price-note">One-time payment</span>
+            </div>
+            <a href="/courses/<%= course.slug %>" class="btn btn-primary">View Program</a>
+          </div>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="about">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-eyebrow">The Process</span>
+      <h2 class="section-title">From Enrollment to <em>Certification</em></h2>
+    </div>
+    <div class="steps">
+      <div class="step" data-reveal>
+        <div class="step-num">01</div>
+        <div class="step-icon"><i class="fas fa-mouse-pointer"></i></div>
+        <h3>Choose Your Program</h3>
+        <p>Select from Web Development, Graphic Design, or Cybersecurity — each designed for real career outcomes.</p>
+      </div>
+      <div class="step-arrow"><i class="fas fa-chevron-right"></i></div>
+      <div class="step" data-reveal>
+        <div class="step-num">02</div>
+        <div class="step-icon"><i class="fas fa-mobile-alt"></i></div>
+        <h3>Pay via M-Pesa</h3>
+        <p>Secure one-time enrollment payment processed instantly via M-Pesa STK Push. No subscriptions.</p>
+      </div>
+      <div class="step-arrow"><i class="fas fa-chevron-right"></i></div>
+      <div class="step" data-reveal>
+        <div class="step-num">03</div>
+        <div class="step-icon"><i class="fas fa-book-open"></i></div>
+        <h3>Learn & Practice</h3>
+        <p>Work through video lessons, illustrated guides, and hands-on exercises at your own pace.</p>
+      </div>
+      <div class="step-arrow"><i class="fas fa-chevron-right"></i></div>
+      <div class="step" data-reveal>
+        <div class="step-num">04</div>
+        <div class="step-icon"><i class="fas fa-certificate"></i></div>
+        <h3>Earn Certificate</h3>
+        <p>Complete all modules and pass every assessment to receive your verifiable Nexus Academy certificate.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY NEXUS -->
+<section class="why-section">
+  <div class="container">
+    <div class="why-grid">
+      <div class="why-image" data-reveal>
+        <div class="why-img-card">
+          <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=700&q=80" alt="Learning at Nexus">
+          <div class="why-img-badge">
+            <i class="fas fa-star"></i>
+            <span>Premium Quality</span>
+          </div>
+        </div>
+      </div>
+      <div class="why-content" data-reveal>
+        <span class="section-eyebrow">Why Nexus Academy</span>
+        <h2 class="section-title">Education That Meets <em>Industry Standards</em></h2>
+        <div class="why-points">
+          <div class="why-point">
+            <div class="why-icon"><i class="fas fa-video"></i></div>
+            <div>
+              <h4>Video-First Learning</h4>
+              <p>Every module includes professionally curated video content from expert practitioners.</p>
+            </div>
+          </div>
+          <div class="why-point">
+            <div class="why-icon"><i class="fas fa-images"></i></div>
+            <div>
+              <h4>Visual Learning Materials</h4>
+              <p>Rich illustrated guides, diagrams, and reference images make complex concepts clear.</p>
+            </div>
+          </div>
+          <div class="why-point">
+            <div class="why-icon"><i class="fas fa-tasks"></i></div>
+            <div>
+              <h4>Exercises After Every Module</h4>
+              <p>Graded assessments reinforce learning. Retry until you pass — no pressure, real mastery.</p>
+            </div>
+          </div>
+          <div class="why-point">
+            <div class="why-icon"><i class="fas fa-award"></i></div>
+            <div>
+              <h4>Verified Certificates</h4>
+              <p>Earn a unique certificate number you can share with employers and on LinkedIn.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-eyebrow">Student Stories</span>
+      <h2 class="section-title">Voices From Our <em>Community</em></h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card" data-reveal>
+        <div class="testimonial-quote"><i class="fas fa-quote-left"></i></div>
+        <p>"The Web Development course at Nexus is unlike anything else in Kenya. I went from knowing nothing to landing a freelance client within 3 months of completing."</p>
+        <div class="testimonial-author">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80" alt="Brian M.">
+          <div>
+            <strong>Brian Mutua</strong>
+            <span>Nairobi, Kenya · Web Developer</span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card" data-reveal>
+        <div class="testimonial-quote"><i class="fas fa-quote-left"></i></div>
+        <p>"The Graphic Design program is incredibly detailed. The color theory module alone changed how I see the world. My freelance income doubled after finishing."</p>
+        <div class="testimonial-author">
+          <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=100&q=80" alt="Aisha K.">
+          <div>
+            <strong>Aisha Kariuki</strong>
+            <span>Mombasa, Kenya · Brand Designer</span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card" data-reveal>
+        <div class="testimonial-quote"><i class="fas fa-quote-left"></i></div>
+        <p>"Cybersecurity at Nexus is world-class. The ethical hacking modules are hands-on and real. I passed my CEH exam on first attempt after this course."</p>
+        <div class="testimonial-author">
+          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&q=80" alt="David O.">
+          <div>
+            <strong>David Omondi</strong>
+            <span>Kisumu, Kenya · Security Analyst</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-eyebrow">Questions</span>
+      <h2 class="section-title">Frequently Asked <em>Questions</em></h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q">How do I pay for a course? <i class="fas fa-plus"></i></button>
+        <div class="faq-a"><p>Payment is made via M-Pesa. After selecting a course, enter your phone number and you'll receive an STK Push prompt on your phone. Confirm the payment and your account is activated instantly.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Do I need prior experience? <i class="fas fa-plus"></i></button>
+        <div class="faq-a"><p>Web Development and Graphic Design start from absolute zero. Cybersecurity recommends basic computer knowledge. All courses build progressively, module by module.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">How long do I have access? <i class="fas fa-plus"></i></button>
+        <div class="faq-a"><p>Lifetime access. Once enrolled, you can revisit all lessons, videos, and exercises at any time — no expiry, no recurring fees.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">How does the certificate work? <i class="fas fa-plus"></i></button>
+        <div class="faq-a"><p>After passing all module exercises, your certificate is automatically generated with a unique verification number. You can download and print it, or share the certificate number with employers.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Can I enroll in multiple courses? <i class="fas fa-plus"></i></button>
+        <div class="faq-a"><p>Absolutely. Each course is purchased separately and you can enroll in all three. Your dashboard tracks progress across all enrolled programs.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section class="cta-section">
+  <div class="cta-bg">
+    <div class="cta-glow"></div>
+  </div>
+  <div class="container">
+    <div class="cta-content">
+      <h2>Ready to Transform<br><em>Your Career?</em></h2>
+      <p>Join students who chose to invest in themselves. Your first lesson is waiting.</p>
+      <div class="cta-actions">
+        <a href="/courses" class="btn btn-primary btn-lg">Browse Programs</a>
+        <a href="/register" class="btn btn-ghost btn-lg">Create Free Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

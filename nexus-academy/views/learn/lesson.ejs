@@ -1,0 +1,185 @@
+<%- include('../partials/header', { pageTitle: lesson.title }) %>
+
+<div class="lesson-layout">
+  <!-- Lesson Sidebar -->
+  <aside class="lesson-sidebar" id="lessonSidebar">
+    <div class="ls-header">
+      <a href="/learn/<%= course.slug %>" class="ls-back"><i class="fas fa-arrow-left"></i></a>
+      <div class="ls-module-info">
+        <span class="ls-module-label">Module <%= module.order_index %></span>
+        <h4><%= module.title.replace(/^Module \d+: /, '') %></h4>
+      </div>
+    </div>
+    <div class="ls-lessons">
+      <% allLessons.forEach((l, i) => { %>
+      <a href="/learn/<%= course.slug %>/module/<%= module.id %>/lesson/<%= l.id %>"
+         class="ls-lesson-item <%= l.id === lesson.id ? 'active' : '' %>">
+        <div class="ls-lesson-num"><%= i + 1 %></div>
+        <span class="ls-lesson-title"><%= l.title %></span>
+        <i class="fas fa-check ls-check" style="display:<%= l.id === lesson.id && isCompleted ? 'block' : 'none' %>"></i>
+      </a>
+      <% }) %>
+      <a href="/learn/<%= course.slug %>/module/<%= module.id %>/exercise" class="ls-lesson-item ls-exercise">
+        <div class="ls-lesson-num"><i class="fas fa-tasks"></i></div>
+        <span>Module Exercise</span>
+        <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Lesson Content -->
+  <div class="lesson-main">
+    <!-- Breadcrumb -->
+    <div class="lesson-breadcrumb">
+      <a href="/learn/<%= course.slug %>"><%= course.title %></a>
+      <i class="fas fa-chevron-right"></i>
+      <span><%= module.title.replace(/^Module \d+: /, '') %></span>
+      <i class="fas fa-chevron-right"></i>
+      <span><%= lesson.title %></span>
+    </div>
+
+    <!-- Video (if exists) -->
+    <% if (lesson.video_url) { %>
+    <div class="lesson-video-wrap">
+      <div class="lesson-video-container">
+        <iframe
+          src="<%= lesson.video_url %>"
+          title="<%= lesson.title %>"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      </div>
+      <div class="video-label"><i class="fas fa-play-circle"></i> Video Lesson</div>
+    </div>
+    <% } %>
+
+    <!-- Lesson Header -->
+    <div class="lesson-header">
+      <div class="lesson-header-meta">
+        <span class="lesson-tag">Module <%= module.order_index %> · Lesson <%= lesson.order_index %></span>
+        <span class="lesson-duration"><i class="fas fa-clock"></i> ~<%= lesson.duration_minutes || 15 %> min read</span>
+      </div>
+      <h1 class="lesson-title"><%= lesson.title %></h1>
+    </div>
+
+    <!-- Lesson Content -->
+    <div class="lesson-content-body">
+      <% if (lesson.content) { %>
+        <%- lesson.content %>
+      <% } else { %>
+      <!-- Default content placeholder showing the structure -->
+      <div class="lesson-placeholder">
+        <div class="placeholder-intro">
+          <h2>Welcome to: <%= lesson.title %></h2>
+          <p class="lead">This lesson is part of <strong><%= module.title %></strong>. Follow along carefully and take notes as you go.</p>
+        </div>
+
+        <div class="content-block">
+          <h3><i class="fas fa-bookmark"></i> Learning Objectives</h3>
+          <p>By the end of this lesson, you will be able to understand and apply the core concepts covered here, recognize how they fit into the broader course curriculum, and practice them through the module exercise.</p>
+        </div>
+
+        <div class="content-block">
+          <h3><i class="fas fa-image"></i> Visual Reference</h3>
+          <div class="lesson-images">
+            <% const refImages = {
+              'web-development': ['https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=800&q=80','https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&q=80'],
+              'graphic-design': ['https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&q=80','https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=800&q=80'],
+              'cybersecurity': ['https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80','https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&q=80']
+            }; %>
+            <% (refImages[course.slug] || []).forEach(img => { %>
+            <div class="lesson-img-card">
+              <img src="<%= img %>" alt="Lesson visual reference" loading="lazy">
+            </div>
+            <% }) %>
+          </div>
+        </div>
+
+        <div class="content-block">
+          <h3><i class="fas fa-code"></i> Key Concepts</h3>
+          <p>Content for <strong><%= lesson.title %></strong> is loaded from the database. Add your rich HTML lesson content through the admin panel or by seeding the <code>lessons</code> table with the <code>content</code> column.</p>
+          <div class="code-block">
+<pre><code>-- Add lesson content via SQL:
+UPDATE lessons
+SET content = '&lt;h2&gt;Your HTML Content Here&lt;/h2&gt;&lt;p&gt;...&lt;/p&gt;'
+WHERE id = 'lesson-uuid-here';</code></pre>
+          </div>
+        </div>
+
+        <div class="content-block">
+          <h3><i class="fas fa-lightbulb"></i> Key Takeaway</h3>
+          <div class="takeaway-box">
+            <p>After studying this material, proceed to the next lesson or complete the module exercise when you've finished all lessons in this module.</p>
+          </div>
+        </div>
+      </div>
+      <% } %>
+    </div>
+
+    <!-- Navigation -->
+    <div class="lesson-nav">
+      <% if (prevLesson) { %>
+      <a href="/learn/<%= course.slug %>/module/<%= module.id %>/lesson/<%= prevLesson.id %>" class="btn btn-ghost">
+        <i class="fas fa-arrow-left"></i> <%= prevLesson.title %>
+      </a>
+      <% } else { %>
+      <a href="/learn/<%= course.slug %>" class="btn btn-ghost">
+        <i class="fas fa-arrow-left"></i> Back to Overview
+      </a>
+      <% } %>
+
+      <div class="lesson-nav-center">
+        <button class="btn btn-success btn-complete" id="completeBtn" onclick="markComplete()">
+          <i class="fas fa-<%= isCompleted ? 'check' : 'check-circle' %>"></i>
+          <%= isCompleted ? 'Completed ✓' : 'Mark Complete' %>
+        </button>
+      </div>
+
+      <% if (nextLesson) { %>
+      <a href="/learn/<%= course.slug %>/module/<%= module.id %>/lesson/<%= nextLesson.id %>" class="btn btn-primary" id="nextBtn">
+        <%= nextLesson.title %> <i class="fas fa-arrow-right"></i>
+      </a>
+      <% } else { %>
+      <a href="/learn/<%= course.slug %>/module/<%= module.id %>/exercise" class="btn btn-primary">
+        Take Module Exercise <i class="fas fa-tasks"></i>
+      </a>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<script>
+let completed = <%- isCompleted ? 'true' : 'false' %>;
+
+async function markComplete() {
+  const btn = document.getElementById('completeBtn');
+  if (completed) return;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(window.location.pathname + '/complete', { method: 'POST' });
+    const data = await res.json();
+    if (data.success) {
+      completed = true;
+      btn.innerHTML = '<i class="fas fa-check"></i> Completed ✓';
+      btn.classList.add('btn-done');
+    }
+  } catch (e) {
+    btn.innerHTML = '<i class="fas fa-check-circle"></i> Mark Complete';
+    btn.disabled = false;
+  }
+}
+
+// Mobile sidebar toggle
+document.addEventListener('DOMContentLoaded', () => {
+  const toggle = document.createElement('button');
+  toggle.className = 'sidebar-toggle-btn';
+  toggle.innerHTML = '<i class="fas fa-list"></i>';
+  toggle.onclick = () => document.getElementById('lessonSidebar').classList.toggle('open');
+  document.querySelector('.lesson-main').prepend(toggle);
+});
+</script>
+
+<%- include('../partials/footer') %>

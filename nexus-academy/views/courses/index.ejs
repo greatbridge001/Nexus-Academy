@@ -1,0 +1,59 @@
+<%- include('../partials/header', { pageTitle: 'All Programs' }) %>
+
+<div class="courses-index-hero">
+  <div class="container">
+    <span class="section-eyebrow">All Programs</span>
+    <h1>Choose Your <em>Discipline</em></h1>
+    <p>Three elite programs. Lifetime access. Industry-recognized certificates.</p>
+  </div>
+</div>
+
+<section style="padding: 0 0 100px;">
+  <div class="container">
+    <div class="course-cards">
+      <% const icons = { 'web-development': 'fa-code', 'graphic-design': 'fa-pen-nib', 'cybersecurity': 'fa-shield-halved' }; %>
+      <% const colors = { 'web-development': 'blue', 'graphic-design': 'purple', 'cybersecurity': 'red' }; %>
+      <% courses.forEach(course => { %>
+      <div class="course-card course-card--<%= colors[course.slug] || 'blue' %>" data-reveal>
+        <div class="course-card-img">
+          <img src="<%= course.thumbnail_url %>" alt="<%= course.title %>" loading="lazy">
+          <div class="course-card-overlay"></div>
+          <div class="course-card-badge">
+            <i class="fas <%= icons[course.slug] || 'fa-graduation-cap' %>"></i>
+          </div>
+        </div>
+        <div class="course-card-body">
+          <div class="course-meta-row">
+            <span class="course-level"><%= course.level %></span>
+            <span class="course-duration"><i class="fas fa-clock"></i> <%= course.duration_hours %>h</span>
+          </div>
+          <h3 class="course-title"><%= course.title %></h3>
+          <p class="course-subtitle"><%= course.subtitle %></p>
+          <p style="font-size:14px;color:var(--white-40);margin-bottom:16px;line-height:1.7;"><%= course.description.substring(0,140) %>...</p>
+          <div class="course-features">
+            <span><i class="fas fa-layer-group"></i> <%= course.total_modules %> Modules</span>
+            <span><i class="fas fa-certificate"></i> Certificate</span>
+            <span><i class="fas fa-video"></i> Videos</span>
+            <span><i class="fas fa-tasks"></i> Exercises</span>
+          </div>
+          <div class="course-card-footer">
+            <div class="course-price">
+              <span class="price-amount">KES <%= course.price.toLocaleString() %></span>
+              <span class="price-note">One-time · Lifetime access</span>
+            </div>
+            <a href="/courses/<%= course.slug %>" class="btn btn-primary">View Program</a>
+          </div>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+
+    <div style="text-align:center;margin-top:60px;padding:40px;background:var(--bg2);border:1px solid var(--border);border-radius:16px;">
+      <h3 style="font-family:'Playfair Display',serif;font-size:24px;margin-bottom:12px;">Not sure which to choose?</h3>
+      <p style="color:var(--white-70);margin-bottom:24px;">Web Development is ideal for building apps and websites. Graphic Design for visual creativity. Cybersecurity for protecting systems and ethical hacking.</p>
+      <a href="/#faq" class="btn btn-outline">Read our FAQ</a>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

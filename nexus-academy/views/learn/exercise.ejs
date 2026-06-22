@@ -1,0 +1,166 @@
+<%- include('../partials/header', { pageTitle: 'Exercise: ' + module.title }) %>
+
+<div class="exercise-layout">
+  <div class="container">
+    <div class="exercise-header">
+      <div class="breadcrumb">
+        <a href="/learn/<%= course.slug %>"><%= course.title %></a>
+        <i class="fas fa-chevron-right"></i>
+        <span>Module <%= module.order_index %> Exercise</span>
+      </div>
+      <h1><i class="fas fa-tasks"></i> Module Exercise</h1>
+      <h2><%= module.title %></h2>
+      <div class="exercise-meta">
+        <span><i class="fas fa-star"></i> Passing score: <%= exercise.passing_score || 70 %>%</span>
+        <span><i class="fas fa-redo"></i> Unlimited attempts</span>
+        <span><i class="fas fa-clock"></i> ~15 minutes</span>
+      </div>
+    </div>
+
+    <% if (result) { %>
+    <!-- RESULTS -->
+    <div class="exercise-result <%= result.passed ? 'result-pass' : 'result-fail' %>">
+      <div class="result-icon">
+        <i class="fas fa-<%= result.passed ? 'trophy' : 'redo-alt' %>"></i>
+      </div>
+      <div class="result-text">
+        <h3><%= result.passed ? '🎉 Excellent Work!' : 'Keep Practicing!' %></h3>
+        <p class="result-score"><span class="score-big"><%= result.score %>%</span></p>
+        <p><%= result.correct %> out of <%= result.total %> correct</p>
+        <% if (result.passed) { %>
+          <p class="result-note">You've passed this module exercise! Your progress has been saved.</p>
+          <% if (result.certEligible) { %>
+          <div class="cert-unlocked">
+            <i class="fas fa-award"></i>
+            <strong>Certificate Unlocked!</strong>
+            <p>You've completed all modules. Your certificate is ready!</p>
+            <a href="/learn/<%= course.slug %>/certificate" class="btn btn-gold">Download Certificate</a>
+          </div>
+          <% } %>
+        <% } else { %>
+          <p class="result-note">You need <%= exercise.passing_score || 70 %>% to pass. Review the lessons and try again.</p>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Question Review -->
+    <div class="result-review">
+      <h3>Answer Review</h3>
+      <% result.results.forEach((q, i) => { %>
+      <div class="review-item <%= q.isCorrect ? 'review-correct' : 'review-wrong' %>">
+        <div class="review-q">
+          <span class="review-num"><%= i + 1 %></span>
+          <p><%= q.question %></p>
+          <i class="fas fa-<%= q.isCorrect ? 'check-circle' : 'times-circle' %>"></i>
+        </div>
+        <% if (!q.isCorrect) { %>
+        <div class="review-answer">
+          <p><strong>Your answer:</strong> <%= q.submitted || '(not answered)' %></p>
+          <p class="correct-ans"><strong>Correct answer:</strong> <%= q.correct %></p>
+          <% if (q.explanation) { %><p class="explanation"><i class="fas fa-lightbulb"></i> <%= q.explanation %></p><% } %>
+        </div>
+        <% } %>
+      </div>
+      <% }) %>
+    </div>
+
+    <div class="exercise-retry-actions">
+      <a href="/learn/<%= course.slug %>" class="btn btn-ghost"><i class="fas fa-arrow-left"></i> Back to Course</a>
+      <% if (!result.passed) { %>
+      <button onclick="document.getElementById('exerciseForm').scrollIntoView({behavior:'smooth'})" class="btn btn-primary">Try Again <i class="fas fa-redo"></i></button>
+      <% } %>
+    </div>
+    <hr class="section-divider">
+    <% } %>
+
+    <!-- Previous attempts -->
+    <% if (attempts.length > 0) { %>
+    <div class="attempts-history">
+      <h4>Your Attempts</h4>
+      <div class="attempts-list">
+        <% attempts.forEach((a, i) => { %>
+        <div class="attempt-item <%= a.passed ? 'attempt-pass' : 'attempt-fail' %>">
+          <span>Attempt <%= attempts.length - i %></span>
+          <span class="attempt-score"><%= a.score %>%</span>
+          <span class="attempt-badge"><%= a.passed ? '✓ Passed' : '✗ Failed' %></span>
+          <span class="attempt-date"><%= new Date(a.attempted_at).toLocaleDateString('en-KE') %></span>
+        </div>
+        <% }) %>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- EXERCISE FORM -->
+    <div class="exercise-form-wrap" id="exerciseForm">
+      <% if (!exercise.questions || !exercise.questions.length) { %>
+      <div class="no-questions">
+        <i class="fas fa-tools"></i>
+        <p>Exercise questions are being prepared for this module.</p>
+        <p>Check back soon, or add questions via the database <code>exercises</code> table.</p>
+        <a href="/learn/<%= course.slug %>" class="btn btn-primary">Return to Course</a>
+      </div>
+      <% } else { %>
+      <form action="/learn/<%= course.slug %>/module/<%= module.id %>/exercise/submit" method="POST" id="quizForm">
+        <div class="quiz-header">
+          <h3><i class="fas fa-pen"></i> <%= exercise.title || 'Module Assessment' %></h3>
+          <p><%= exercise.instructions || 'Answer all questions. Select the best answer for each.' %></p>
+        </div>
+
+        <% exercise.questions.forEach((q, i) => { %>
+        <div class="quiz-question" id="qq<%= i %>">
+          <div class="qq-num">Q<%= i + 1 %></div>
+          <p class="qq-text"><%= q.question %></p>
+          <div class="qq-options">
+            <% (q.options || []).forEach((opt, j) => { %>
+            <label class="qq-option">
+              <input type="radio" name="q<%= i %>" value="<%= opt %>" required>
+              <span class="qq-letter"><%= String.fromCharCode(65 + j) %></span>
+              <span class="qq-opt-text"><%= opt %></span>
+            </label>
+            <% }) %>
+          </div>
+        </div>
+        <% }) %>
+
+        <div class="quiz-submit">
+          <div class="quiz-score-preview">
+            <span id="answeredCount">0</span> of <%= exercise.questions.length %> answered
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg" id="submitQuizBtn">
+            <i class="fas fa-paper-plane"></i> Submit Exercise
+          </button>
+        </div>
+      </form>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<script>
+// Track answered questions
+const totalQ = <%= exercise.questions ? exercise.questions.length : 0 %>;
+document.querySelectorAll('.qq-option input').forEach(input => {
+  input.addEventListener('change', () => {
+    const answered = new Set(
+      [...document.querySelectorAll('.qq-option input:checked')].map(i => i.name)
+    ).size;
+    document.getElementById('answeredCount').textContent = answered;
+  });
+});
+
+// Highlight selected option
+document.querySelectorAll('.qq-option').forEach(label => {
+  label.querySelector('input')?.addEventListener('change', () => {
+    label.closest('.qq-options').querySelectorAll('.qq-option').forEach(l => l.classList.remove('selected'));
+    label.classList.add('selected');
+  });
+});
+
+document.getElementById('quizForm')?.addEventListener('submit', function(e) {
+  const btn = document.getElementById('submitQuizBtn');
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Grading...';
+  btn.disabled = true;
+});
+</script>
+
+<%- include('../partials/footer') %>
